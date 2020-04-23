@@ -1,6 +1,19 @@
 %Send n number of requests to servers
+tic
 for idx = 1:4
-    %Create an asyncronous 
-    f = parfeval(@distCompute, 1, [1,2;3,4]);
+    %Create an asyncronous thread to send and collect the POST response
+    f(idx) = parfeval(@distCompute, 1, [1,2;3,4]);
 end
-value = fetchOutputs(f)
+result = afterAll(f, @(r) disp('Completed all tasks'), 0);
+fetchOutputs(result);
+
+d2s = 24*3600;
+for idx = 1:4
+    scheduleStart = d2s*datenum(f(idx).CreateDateTime);
+    actualStart = d2s*datenum(f(idx).StartDateTime);
+    finish = d2s*datenum(f(idx).FinishDateTime);
+    disp(finish-scheduleStart);
+    totalTimes(idx) = finish-scheduleStart;
+    TOF(idx) = 
+end
+toc

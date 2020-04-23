@@ -3,7 +3,10 @@ function newArr = distCompute(img)
     import matlab.net.*
     import matlab.net.http.*
     
-    url = 'http://127.0.0.1:5000';
+    %Testing locally:
+    %url = 'http://127.0.0.1:5000';
+    %Main use:
+    url = 'http://ec2-54-153-109-202.us-west-1.compute.amazonaws.com:5000';
     
     %Form request body
     sendData.password = "12345";
@@ -11,7 +14,7 @@ function newArr = distCompute(img)
     body = MessageBody(jsonencode(sendData));
 
     %Create header for the request
-    %We are transmitted plain text (content type)
+    %We are transmitting json objects to the server
     contentTypeField = matlab.net.http.field.ContentTypeField('application/json');
     %We will only accept json responses back
     type_json = matlab.net.http.MediaType('application/json','q','.5');
