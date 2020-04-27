@@ -36,8 +36,8 @@ end
 % End of image Pre-Processing setup
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-n = 1; %Enter the number of servers here
-[y,x,v,u] = runDICParallel(images(1).data, images(2).data, n);
+n = 4; %Enter the number of servers here
+[y,x,v,u,TOF,algoTimes] = runDICParallel(images(1).data, images(2).data, n);
 fprintf('Processing complete!\n')
 
 

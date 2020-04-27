@@ -1,5 +1,7 @@
-function [y,x,v,u] = distCompute(img_a, img_b, img_box_width, img_x_start, ...
-    img_y_start, img_x_length, img_y_length)
+function [y,x,v,u,algoTime] = distCompute(img_a, img_b, img_box_width, img_x_start, ...
+    img_y_start, img_x_length, img_y_length, step, i)
+    %i is the number of request, so that we can send them NOT to
+    %consecutive servers
     %Import HTTP functions
     import matlab.net.*
     import matlab.net.http.*
@@ -18,6 +20,7 @@ function [y,x,v,u] = distCompute(img_a, img_b, img_box_width, img_x_start, ...
     sendData.img_y_start = img_y_start;
     sendData.img_x_length = img_x_length;
     sendData.img_y_length = img_y_length;
+    sendData.step = step;
     body = MessageBody(jsonencode(sendData));
 
     %Create header for the request
@@ -36,10 +39,11 @@ function [y,x,v,u] = distCompute(img_a, img_b, img_box_width, img_x_start, ...
     %Read status code to check for success
     if(resp.StatusCode == 200)
         fprintf('Request successful.\n');
-        y = resp.Body.Data.y
-        x = resp.Body.Data.x
-        u = resp.Body.Data.u
-        v = resp.Body.Data.v
+        y = resp.Body.Data.y;
+        x = resp.Body.Data.x;
+        u = resp.Body.Data.u;
+        v = resp.Body.Data.v;
+        algoTime = resp.Body.Data.timeElapsed;
     elseif(resp.StatusCode == 401)
         fprintf('Wrong password sent to server.\n');
     else

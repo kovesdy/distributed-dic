@@ -11,7 +11,7 @@ import math
 import json
 import operator
 import numpy
-from numpy import array, power, amax, argmax
+from numpy import array, power, amax, argmax, multiply
 app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
@@ -20,7 +20,8 @@ def hello_world():
 	if 'password' in data and validate(data['password']):
 		start = time.time();
 		(y,x,v,u) = runAlgo(data['img_a'], data['img_b'], data['img_box_width'],
-			data['img_x_start'], data['img_y_start'], data['img_x_length'], data['img_y_length'])
+			data['img_x_start'], data['img_y_start'], data['img_x_length'], data['img_y_length'],
+			data['step'])
 		end = time.time();
 		returnDic = {"y":y, "x":x, "v":v, "u":u, "timeElapsed":(end-start)}
 		return returnDic
@@ -31,11 +32,10 @@ def validate(password):
 	#TODO change to OS variable (set in linux server)
 	return password == '12345'
 
-def runAlgo(img_a, img_b, img_box_width, img_x_start, img_y_start, img_x_length, img_y_length):
+def runAlgo(img_a, img_b, img_box_width, img_x_start, img_y_start, img_x_length, img_y_length, step):
     # Ax = Ay = Bx = By = img_box_width
     search_box_width = 2*img_box_width; # Sx = Sy = 2*Ax
     shift_dist = img_box_width // 2; # shiftx = shifty = Ax/2
-    step = 1; # Change for optimal speed
     y = [];
     x = [];
     v = [];
@@ -66,7 +66,7 @@ def runAlgo(img_a, img_b, img_box_width, img_x_start, img_y_start, img_x_length,
                     # The best correlation determines the displacement of A into img_b.
                     a1 = A - A_avg
                     b1 = B - B_avg
-                    C[i+gorg, j+gorg] = sum(sum(multiply(a1, b1))) / math.pow(sum(sum(power(a1, 2))) * sum(sum(power(b1,2))), 0.5);
+                    C[i+gorg, j+gorg] = sumSumArrMult(a1,b1) / math.pow(sum(sum(power(a1, 2))) * sum(sum(power(b1,2))), 0.5);
 
             actualMax = amax(C, axis=0) #Gets max value of each COLUMN (axis=0 option)
             maxIndex = argmax(C, axis=0)
