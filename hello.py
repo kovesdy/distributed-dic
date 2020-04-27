@@ -8,7 +8,9 @@ Created on Sun Apr 26 17:15:53 2020
 from flask import Flask, request, abort
 import math
 import json
-from numpy import array, power
+import operator
+import numpy
+from numpy import array, power, amax, argmax
 app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
@@ -17,7 +19,8 @@ def hello_world():
 	if 'password' in data and validate(data['password']):
 		(y,x,v,u) = runAlgo(data['img_a'], data['img_b'], data['img_box_width'],
 			data['img_x_start'], data['img_y_start'], data['img_x_length'], data['img_y_length'])
-		return {"y":y, "x":x, "v":v, "u":u}
+		returnDic = {"y":y, "x":x, "v":v, "u":u}
+		return returnDic
 	else:
 		abort(401); #Unauthorized
 
@@ -38,11 +41,11 @@ def runAlgo(img_a, img_b, img_box_width, img_x_start, img_y_start, img_x_length,
     img_b = array(img_b)
     gorg = (search_box_width - img_box_width)//2;
     
-    for p in range(gorg + img_x_start, img_x_start + img_x_length - search_box_width -1, shift_dist):
-        # progress indicator...
+    for p in range(gorg + img_x_start, img_x_start + img_x_length - search_box_width, shift_dist):
+        # Progress indicator...
         print(str(100*p/(img_x_start + img_x_length - search_box_width)) + "% completed\n");
         
-        for q in range(gorg + img_y_start, img_y_start + img_y_length - search_box_width -1, shift_dist):
+        for q in range(gorg + img_y_start, img_y_start + img_y_length - search_box_width, shift_dist):
             # pixel array A
             A = img_a[p:p + img_box_width, q:q + img_box_width]; 
             A_avg = sum(sum(A)) / (img_box_width^2); # I_a average value
@@ -58,25 +61,22 @@ def runAlgo(img_a, img_b, img_box_width, img_x_start, img_y_start, img_x_length,
                     # Calculate the correlation coefficient, C, for this pixel array
                     # Evaluate C at all possible locations (index shifts I, J).
                     # The best correlation determines the displacement of A into img_b.
-                    #C[i+gorg, j+gorg] = sum(sum((A - A_avg)*(B - B_avg))) / (sum(sum((A - A_avg)^2)) * sum(sum(B-B_avg)^2))^(1/2);
                     a1 = A - A_avg
                     b1 = B - B_avg
-                    c1 = math.pow(sum(sum(power(a1, 2))) * sum(sum(power(b1,2))), 0.5)
-                    C[i+gorg, j+gorg] = sumSumArrMult(a1, b1) / c1;
+                    C[i+gorg, j+gorg] = sumSumArrMult(a1, b1) / math.pow(sum(sum(power(a1, 2))) * sum(sum(power(b1,2))), 0.5);
                     
-            [actualMax, maxIndex] = max[C];
-            [maxi, yInd] = max(actualMax); # Second result is the y index of max. value of C
+            actualMax = amax(C, axis=0) #Gets max value of each COLUMN (axis=0 option)
+            maxIndex = argmax(C, axis=0)
+            maxi = amax(actualMax)
+            yInd = argmax(actualMax)
             xInd = maxIndex[yInd]; # x index of max value of C
             
-            y.append(q + gorg);
-            x.append(p + gorg);
-            v.append(yInd - gorg);
-            u.append(xInd - gorg);
+            y.append(numpy.int16(q + gorg).item());
+            x.append(numpy.int16(p + gorg).item());
+            v.append(numpy.int16(yInd - gorg).item());
+            u.append(numpy.int16(xInd - gorg).item());
     return (y,x,v,u)
 
-#Adds a to every element in ARR (a 2d list). Returns new value of ARR
-def arrAdd(ARR, x):
-    return [[a+x for a in b] for b in ARR]
 
 #Scalar multiplication
 #Assumes and b are the same size
@@ -87,6 +87,3 @@ def sumSumArrMult(a, b):
         for g in range(0, n):
             c += a[f,g] * b[f,g]
     return c
-
-def arrExp(ARR, x):
-    return [[math.pow(a,x) for a in b] for b in ARR]

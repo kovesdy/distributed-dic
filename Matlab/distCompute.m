@@ -36,10 +36,10 @@ function [y,x,v,u] = distCompute(img_a, img_b, img_box_width, img_x_start, ...
     %Read status code to check for success
     if(resp.StatusCode == 200)
         fprintf('Request successful.\n');
-        y = resp.Body.Data.y;
-        x = resp.Body.Data.x;
-        u = resp.Body.Data.u;
-        v = resp.Body.Data.v;
+        y = resp.Body.Data.y
+        x = resp.Body.Data.x
+        u = resp.Body.Data.u
+        v = resp.Body.Data.v
     elseif(resp.StatusCode == 401)
         fprintf('Wrong password sent to server.\n');
     else

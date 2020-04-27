@@ -20,19 +20,19 @@ function [y,x,v,u] = runDICParallel(img_a, img_b, n)
         end
     end
     %result = afterAll(f, @(r) disp('Completed all tasks'), 0);
-    [y(idx), x(idx), v(idx), u(idx)] = fetchOutputs(f);
+    [y,x,v,u] = fetchOutputs(f);
 
     d2s = 24*3600;
-    for idx = 1:4
-        scheduleStart = d2s*datenum(f(idx).CreateDateTime);
-        actualStart = d2s*datenum(f(idx).StartDateTime);
-        finish = d2s*datenum(f(idx).FinishDateTime);
+    for idx2 = 1:idx-1
+        scheduleStart = d2s*datenum(f(idx2).CreateDateTime);
+        actualStart = d2s*datenum(f(idx2).StartDateTime);
+        finish = d2s*datenum(f(idx2).FinishDateTime);
         disp(finish-scheduleStart);
         %Total times are from parfeval command to complete array returned (s)
-        totalTimes(idx) = finish-scheduleStart;
+        totalTimes(idx2) = finish-scheduleStart;
         %Time of flight (TOF) are from the http script is started to array
         %returned (s)
-        TOF(idx) = finish-actualStart;
+        TOF(idx2) = finish-actualStart;
     end
     toc
 end
