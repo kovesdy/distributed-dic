@@ -14,7 +14,7 @@ function [y,x,v,u] = runDICParallel(img_a, img_b, n)
     for x_loc = 0:nx_server:(nx-nx_server)
         for y_loc = 0:nx_server:(nx-nx_server)
             %Create an asyncronous thread to send and collect the POST response
-            f(idx) = parfeval(@distCompute,4, img_a, img_b, nx_server/4, ...
+            f(idx) = parfeval(@distCompute,4, img_a, img_b, nx_server/8, ...
                 x_loc, y_loc, nx_server, nx_server);
             idx = idx + 1;
         end
