@@ -8,6 +8,7 @@ Created on Sun Apr 26 17:15:53 2020
 from flask import Flask, request, abort
 import math
 import json
+from numpy import array, power
 app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
@@ -33,30 +34,35 @@ def runAlgo(img_a, img_b, img_box_width, img_x_start, img_y_start, img_x_length,
     x = [];
     v = [];
     u = [];
+    img_a = array(img_a)
+    img_b = array(img_b)
     gorg = (search_box_width - img_box_width)//2;
     
-    for p in range(gorg + img_x_start, img_x_start + img_x_length - search_box_width, shift_dist):
+    for p in range(gorg + img_x_start, img_x_start + img_x_length - search_box_width -1, shift_dist):
         # progress indicator...
         print(str(100*p/(img_x_start + img_x_length - search_box_width)) + "% completed\n");
         
-        for q in range(gorg + img_y_start, img_y_start + img_y_length - search_box_width, shift_dist):
+        for q in range(gorg + img_y_start, img_y_start + img_y_length - search_box_width -1, shift_dist):
             # pixel array A
-            A = img_a[p:p + img_box_width][q:q + img_box_width]; 
-            A_avg = sum(sum(A,[])) / (img_box_width^2); # I_a average value
+            A = img_a[p:p + img_box_width, q:q + img_box_width]; 
+            A_avg = sum(sum(A)) / (img_box_width^2); # I_a average value
             
-            C = [[0 for g in range(0, gorg*2)] for h in range(0, gorg*2)];
+            C = array([[0 for g in range(0, gorg*2)] for h in range(0, gorg*2)]);
             # Find the displacement of A by correlating this pixel array with all possible destinations B(K,L) in search box S of img_b
             for i in range(-gorg, gorg, step): # x pixel shift within S
                 for j in range(-gorg, gorg, step): # y pixel shift within S
                     # pixel array B (size(A) = size(B) < size(S))
-                    B = img_b[i+p:i+p+img_box_width][j+q:j+q+img_box_width];
-                    B_avg = sum(sum(B,[])) / (img_box_width^2); # I_b average value
+                    B = img_b[i+p:i+p+img_box_width, j+q:j+q+img_box_width];
+                    B_avg = sum(sum(B)) / (img_box_width^2); # I_b average value
                     
                     # Calculate the correlation coefficient, C, for this pixel array
                     # Evaluate C at all possible locations (index shifts I, J).
                     # The best correlation determines the displacement of A into img_b.
                     #C[i+gorg, j+gorg] = sum(sum((A - A_avg)*(B - B_avg))) / (sum(sum((A - A_avg)^2)) * sum(sum(B-B_avg)^2))^(1/2);
-                    C[i+gorg, j+gorg] = sumSumArrMult(arrAdd(A, -A_avg), arrAdd(B, -B_avg)) / math.pow(sum(sum(arrExp(arrAdd(A, -A_avg), 2), [])) * sum(sum(arrExp(arrAdd(B,-B_avg),2), [])), 0.5);
+                    a1 = A - A_avg
+                    b1 = B - B_avg
+                    c1 = math.pow(sum(sum(power(a1, 2))) * sum(sum(power(b1,2))), 0.5)
+                    C[i+gorg, j+gorg] = sumSumArrMult(a1, b1) / c1;
                     
             [actualMax, maxIndex] = max[C];
             [maxi, yInd] = max(actualMax); # Second result is the y index of max. value of C
@@ -76,9 +82,10 @@ def arrAdd(ARR, x):
 #Assumes and b are the same size
 def sumSumArrMult(a, b):
     c = 0; #Initialize to the same size
-    for i in range(0,len(a)-1):
-        for j in range(0, len(a[i])-1):
-            c += a[i][j] * b[i][j]
+    n = len(a)
+    for f in range(0, n):
+        for g in range(0, n):
+            c += a[f,g] * b[f,g]
     return c
 
 def arrExp(ARR, x):
