@@ -5,11 +5,22 @@ function [y,x,v,u,algoTime] = distCompute(img_a, img_b, img_box_width, img_x_sta
     %Import HTTP functions
     import matlab.net.*
     import matlab.net.http.*
-    
+    %{
     %Testing locally:
     url = 'http://127.0.0.1:5000';
     %Main use:
-    %url = 'http://ec2-54-153-109-202.us-west-1.compute.amazonaws.com:5000';
+    %}
+    n_servs = 3; %Total number of servers
+    switch mod(i, n_servs)
+        case 0
+            url = 'http://ec2-54-153-109-202.us-west-1.compute.amazonaws.com:5000';    
+        %case 1
+            %url = 'http://ec2-54-183-25-66.us-west-1.compute.amazonaws.com:5000';
+        case 1
+            url = 'http://ec2-204-236-180-243.us-west-1.compute.amazonaws.com:5000';
+        case 2
+            url = 'http://ec2-54-153-102-11.us-west-1.compute.amazonaws.com:5000';
+    end
     
     %Form request body
     sendData.password = "12345";
