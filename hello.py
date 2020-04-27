@@ -13,8 +13,9 @@ app = Flask(__name__)
 def hello_world():
 	data = json.loads(request.get_json())
 	if 'password' in data and validate(data['password']):
-		#TODO call runAlgo
-        return {"array":data['array']}
+		(y,x,v,u) = runAlgo(data['img_a'], data['img_b'], data['img_box_width'],
+			data['img_x_start'], data['img_y_start'], data['img_x_length'], data['img_y_length'])
+		return {"y":y, "x":x, "v":v, "u":u}
 	else:
 		abort(401); #Unauthorized
 
@@ -23,7 +24,6 @@ def validate(password):
 	return password == '12345'
 
 def runAlgo(img_a, img_b, img_box_width, img_x_start, img_y_start, img_x_length, img_y_length):
-    #TODO the entire fucking thing
     # Ax = Ay = Bx = By = img_box_width
     search_box_width = 2*img_box_width; # Sx = Sy = 2*Ax
     shift_dist = img_box_width / 2; # shiftx = shifty = Ax/2
@@ -60,3 +60,4 @@ def runAlgo(img_a, img_b, img_box_width, img_x_start, img_y_start, img_x_length,
             v[k] = yInd - (search_box_width - img_box_width)/2 - 1;
             u[k] = xInd - (search_box_width - img_box_width)/2 - 1;
             k = k + 1;
+    return (y,x,v,u)
