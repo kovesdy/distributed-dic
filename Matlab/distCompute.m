@@ -1,4 +1,5 @@
-function newArr = distCompute(img)
+function newArr = distCompute(img_a, img_b, img_box_width, img_x_start, ...
+    img_y_start, img_x_length, img_y_length)
     %Import HTTP functions
     import matlab.net.*
     import matlab.net.http.*
@@ -10,7 +11,13 @@ function newArr = distCompute(img)
     
     %Form request body
     sendData.password = "12345";
-    sendData.array = img;
+    sendData.img_a = img_a;
+    sendData.img_b = img_b;
+    sendData.img_box_width = img_box_width;
+    sendData.img_x_start = img_x_start;
+    sendData.img_y_start = img_y_start;
+    sendData.img_x_length = img_x_length;
+    sendData.img_y_length = img_y_length;
     body = MessageBody(jsonencode(sendData));
 
     %Create header for the request

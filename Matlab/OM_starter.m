@@ -36,78 +36,8 @@ end
 % End of image Pre-Processing setup
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  Correlation Parameters for the image pair:
-%  image box and search box dimensions (in pixels);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  For each image box in img_a, calculate the displacement.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% nx*ny = total number of displacement calculations (grid points).  This is
-% a function of the image size and the Correlation Parameters from above.
-
-nx = size(temp, 1);
-ny = size(temp, 2);
-
-if (nx > 600) % Speeds up runtime for larger images
-    step = 4;
-else
-    step = 1;
-end
-
-Ax = nx / 8;
-Ay = ny / 8;
-Bx = Ax;
-By = Ay;
-Sx = 2*Ax;
-Sy = 2*Ay;
-shiftx = Bx/2;
-shifty = By/2;
-k = 1; % Loop control variable
-
-for p = (Sx-Bx)/2+1:shiftx:nx-Sx+1
-    % progress indicator...
-    fprintf('%.0f%%...\n',100*p/(nx-Sx+1))
-    
-    for q = (Sy-By)/2+1:shifty:ny-Sy+1
-
-        % pixel array A
-        A = double(images(1).data(p:p+Ax-1, q:q+Ay-1));  % specify array indices and convert to a double
-        % NOTE: imshow does not like doubles, so imshow(uint8(A)) will display A nicely
-        A_avg = sum(sum(A)) / (Ax*Ay); % I_a average value
-
-        % Find the displacement of A by correlating this pixel array with all 
-        % possible destinations B(K,L) in search box S of img_b.
-        for i = -(Sx-Bx)/2:step:(Sx-Bx)/2  % x pixel shift within S
-            for j = -(Sy-By)/2:step:(Sy-By)/2 % y pixel shift within S
-                
-                % pixel array B      HINT: size(A) = size(B) < size(S)
-                B = double(images(2).data(i+p:i+p+Bx-1, j+q:j+q+By-1)); % specify array indices within S and convert to a double
-                B_avg = sum(sum(B)) / (Bx*By); % I_b average value
-
-                % Calculate the correlation coefficient, C, for this pixel array.
-                % Evaluate C at all possible locations (index shifts I,J).
-                % The best correlation determines the displacement of A into img_b.
-				%  Note: Double sum below effectively implements Double Riemann sum across k and l in lecture
-                C(i+(Sx-By)/2+1, j+(Sy-By)/2+1) = sum(sum( (A - A_avg).*(B - B_avg) )) / sqrt(sum(sum( (A - A_avg).^2 ))*sum(sum( (B - B_avg).^2 )));
-            end % j
-        end % i
-        [actualMax, maxIndex] = max(C);
-        [maxi, yInd] = max(actualMax); % Second result is the y index of max. value of C
-        xInd = maxIndex(yInd); % x index of max value of C
-        
-        y(k) = q+(Sy-By)/2+1;
-        x(k) = p+(Sx-By)/2+1;
-        v(k) = yInd - (Sy-By)/2 - 1;
-        u(k) = xInd - (Sx-By)/2 - 1;
-        k = k+1;
-    end % q
-end % p
-
+n = 1; %Enter the number of servers here
+[y,x,v,u] = runDICParallel(images(1).data, images(2).data);
 fprintf('Processing complete!\n')
 
 

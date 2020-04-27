@@ -1,3 +1,11 @@
+% Arpad Kovesdy
+% AME341bL - Junior Project
+% Distributed Computing System
+
+%Select threading system (not process worker system) for parallel
+%processing
+%parpool('threads');
+function [y,x,v,u] = runDICParallel(img_a, img_b)
 %Send n number of requests to servers
 tic
 for idx = 1:4
@@ -13,7 +21,11 @@ for idx = 1:4
     actualStart = d2s*datenum(f(idx).StartDateTime);
     finish = d2s*datenum(f(idx).FinishDateTime);
     disp(finish-scheduleStart);
+    %Total times are from parfeval command to complete array returned (s)
     totalTimes(idx) = finish-scheduleStart;
-    TOF(idx) = 
+    %Time of flight (TOF) are from the http script is started to array
+    %returned (s)
+    TOF(idx) = finish-actualStart;
 end
 toc
+end
