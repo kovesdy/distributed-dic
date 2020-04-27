@@ -1,13 +1,13 @@
-function newArr = distCompute(img_a, img_b, img_box_width, img_x_start, ...
+function [y,x,v,u] = distCompute(img_a, img_b, img_box_width, img_x_start, ...
     img_y_start, img_x_length, img_y_length)
     %Import HTTP functions
     import matlab.net.*
     import matlab.net.http.*
     
     %Testing locally:
-    %url = 'http://127.0.0.1:5000';
+    url = 'http://127.0.0.1:5000';
     %Main use:
-    url = 'http://ec2-54-153-109-202.us-west-1.compute.amazonaws.com:5000';
+    %url = 'http://ec2-54-153-109-202.us-west-1.compute.amazonaws.com:5000';
     
     %Form request body
     sendData.password = "12345";
@@ -36,9 +36,10 @@ function newArr = distCompute(img_a, img_b, img_box_width, img_x_start, ...
     %Read status code to check for success
     if(resp.StatusCode == 200)
         fprintf('Request successful.\n');
-        if (resp.Body.Data.array == sendData.array)
-            newArr = resp.Body.Data.array;
-        end
+        y = resp.Body.Data.y;
+        x = resp.Body.Data.x;
+        u = resp.Body.Data.u;
+        v = resp.Body.Data.v;
     elseif(resp.StatusCode == 401)
         fprintf('Wrong password sent to server.\n');
     else

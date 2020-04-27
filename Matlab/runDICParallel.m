@@ -1,19 +1,26 @@
 % Arpad Kovesdy
 % AME341bL - Junior Project
 % Distributed Computing System
-
-%Select threading system (not process worker system) for parallel
-%processing
-%parpool('threads');
 function [y,x,v,u] = runDICParallel(img_a, img_b, n)
     %Send n number of requests to n servers
+    
+    %nx and ny are the dimensions of img_a
+    [nx, ~] = size(img_a);
+    nx_server = nx/sqrt(n);
+    
+    %Start the total process timer
     tic
-    for idx = 1:4
-        %Create an asyncronous thread to send and collect the POST response
-        f(idx) = parfeval(@distCompute, 1, [1,2;3,4]);
+    idx = 1;
+    for x_loc = 0:nx_server:(nx-nx_server)
+        for y_loc = 0:nx_server:(nx-nx_server)
+            %Create an asyncronous thread to send and collect the POST response
+            f(idx) = parfeval(@distCompute,4, img_a, img_b, nx_server/4, ...
+                x_loc, y_loc, nx_server, nx_server);
+            idx = idx + 1;
+        end
     end
-    result = afterAll(f, @(r) disp('Completed all tasks'), 0);
-    fetchOutputs(result);
+    %result = afterAll(f, @(r) disp('Completed all tasks'), 0);
+    [y(idx), x(idx), v(idx), u(idx)] = fetchOutputs(f);
 
     d2s = 24*3600;
     for idx = 1:4

@@ -7,7 +7,7 @@ setup_mode = 1;
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  specify the working directory where the a/b image pair is stored
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-working_dir = [pwd, '\large\']; 
+working_dir = [pwd, '\img\']; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get the filenames of the a/b image pair in working_dir.  This will create
@@ -24,10 +24,10 @@ for i = 1:length(images)
     % load image data into a temporary variable
     temp = imread([working_dir,images(i).name]);
     % show original image
-    if setup_mode == 1
-        figure(1);  subplot(2,2,i);
-        imshow(temp);  title(images(i).name,'Interpreter','none'); hold on;
-    end
+    %if setup_mode == 1
+    %    figure(1);  subplot(2,2,i);
+    %    imshow(temp);  title(images(i).name,'Interpreter','none'); hold on;
+    %end
 
 	% Assign flattened (grayscale) image data to the structure "IMAGES"; 
     % this data will be used for interrogation.
@@ -37,7 +37,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 n = 1; %Enter the number of servers here
-[y,x,v,u] = runDICParallel(images(1).data, images(2).data);
+[y,x,v,u] = runDICParallel(images(1).data, images(2).data, n);
 fprintf('Processing complete!\n')
 
 
