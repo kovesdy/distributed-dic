@@ -10,16 +10,26 @@ function [y,x,v,u,algoTime] = distCompute(img_a, img_b, img_box_width, img_x_sta
     url = 'http://127.0.0.1:5000';
     %Main use:
     %}
-    n_servs = 3; %Total number of servers
+    n_servs = 9; %Total number of servers
     switch mod(i, n_servs)
         case 0
             url = 'http://ec2-54-153-109-202.us-west-1.compute.amazonaws.com:5000';    
-        %case 1
-            %url = 'http://ec2-54-183-25-66.us-west-1.compute.amazonaws.com:5000';
         case 1
-            url = 'http://ec2-204-236-180-243.us-west-1.compute.amazonaws.com:5000';
+            url = 'http://ec2-54-153-127-88.us-west-1.compute.amazonaws.com:5000';
         case 2
+            url = 'http://ec2-204-236-180-243.us-west-1.compute.amazonaws.com:5000';
+        case 3
             url = 'http://ec2-54-153-102-11.us-west-1.compute.amazonaws.com:5000';
+        case 0
+            url = 'http://ec2-13-52-242-33.us-west-1.compute.amazonaws.com:5000';
+        case 1
+            url = 'http://ec2-3-101-25-193.us-west-1.compute.amazonaws.com:5000';
+        case 2
+            url = 'http://ec2-54-176-41-10.us-west-1.compute.amazonaws.com:5000';
+        case 3
+            url = 'http://ec2-13-52-243-17.us-west-1.compute.amazonaws.com:5000';
+        case 4
+            url = 'http://ec2-52-53-197-114.us-west-1.compute.amazonaws.com:5000';
     end
     
     %Form request body

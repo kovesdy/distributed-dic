@@ -14,7 +14,7 @@ function [y,x,v,u,TOF,algoTime] = runDICParallel(img_a, img_b, n, step)
     for x_loc = 0:nx_server:(nx-nx_server)
         for y_loc = 0:nx_server:(nx-nx_server)
             %Compensate for search box overrun detection
-            %{
+            
             if(x_loc <= nx-nx_server-(2*nx/8))
                 x_length = nx_server+(2*nx/8);
             else
@@ -25,11 +25,11 @@ function [y,x,v,u,TOF,algoTime] = runDICParallel(img_a, img_b, n, step)
             else
                 y_length = nx_server;
             end
-            %}
             
+            %{
             x_length = nx_server;
             y_length = nx_server;
-            
+            %}
             %Create an asyncronous thread to send and collect the POST response
             f(idx) = parfeval(@distCompute,5, img_a, img_b, floor(nx/8), ...
                 floor(x_loc), floor(y_loc), floor(x_length), floor(y_length), ...

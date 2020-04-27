@@ -36,6 +36,8 @@ end
 % End of image Pre-Processing setup
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+%For single tests only
 %{
 n = 4; %Enter the number of servers here
 [y,x,v,u,TOF,algoTimes] = runDICParallel(images(1).data, images(2).data, n, 4);
@@ -44,17 +46,20 @@ fprintf('Processing complete!\n')
 
 ind = 1;
 %yy represents the number of chunks we subdivide into
-for yy = [4, 9, 16]
-    TOF = {};
-    algoTimes = {};
+for yy = [1, 4, 9, 16]
+    TOF = [];
+    algoTimes = [];
     for zz = 1:5
-        [y,x,v,u,TOF{zz},algoTimes{zz}] = runDICParallel(images(1).data, images(2).data, yy, 8);
+        [y,x,v,u,TOF(zz,:),algoTimes(zz,:)] = runDICParallel(images(1).data, images(2).data, yy, 4);
     end
+    TOF_means(ind) = mean(mean(TOF));
+    TOF_stds(ind) = std(std(TOF));
+    algo_means(ind) = mean(mean(algoTimes));
+    algo_stds(ind) = std(std(algoTimes));
     TOF_results{ind} = TOF;
     algo_results{ind} = algoTimes;
     ind = ind+1;
 end
-
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Plot vectors on shifted image

@@ -7,7 +7,7 @@ setup_mode = 1;
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  specify the working directory where the a/b image pair is stored
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-working_dir = [pwd, '\img\']; 
+working_dir = [pwd, '\img_small\']; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get the filenames of the a/b image pair in working_dir.  This will create
@@ -36,22 +36,26 @@ end
 % End of image Pre-Processing setup
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-n = 4; %Enter the number of servers here
-[y,x,v,u,TOF,algoTimes] = runDICParallel(images(1).data, images(2).data, n);
-fprintf('Processing complete!\n')
 
+%For single tests only
 %{
-for yy = [1, 4, 9, 16]
-    n = 1; %Enter the number of servers here
-    for zz = 1:5
-        [y,x,v,u,TOF(zz),algoTimes(zz)] = runDICParallel(images(1).data, images(2).data, n);
-    end
-    TOF_results(yy) = mean(TOF);
-    TOF_std(yy) = std(TOF);
-    algo_results(zz) = mean(algoTimes);
-    algo_std(yy
-end
+n = 4; %Enter the number of servers here
+[y,x,v,u,TOF,algoTimes] = runDICParallel(images(1).data, images(2).data, n, 4);
+fprintf('Processing complete!\n')
 %}
+
+ind = 1;
+%yy represents the number of chunks we subdivide into
+for yy = [1, 4, 9, 16]
+    TOF = {};
+    algoTimes = {};
+    for zz = 1:5
+        [y,x,v,u,TOF(zz,:),algoTimes(zz,:)] = runDICParallel(images(1).data, images(2).data, yy, 1);
+    end
+    TOF_results{ind} = mean(TOF);
+    algo_results{ind} = algoTimes;
+    ind = ind+1;
+end
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Plot vectors on shifted image
