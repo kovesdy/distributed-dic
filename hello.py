@@ -27,7 +27,6 @@ def runAlgo(img_a, img_b, img_box_width, img_x_start, img_y_start, img_x_length,
     # Ax = Ay = Bx = By = img_box_width
     search_box_width = 2*img_box_width; # Sx = Sy = 2*Ax
     shift_dist = img_box_width / 2; # shiftx = shifty = Ax/2
-    k = 0; # Loop control variable
     step = 1; # Change for optimal speed
     y = [];
     x = [];
@@ -64,5 +63,4 @@ def runAlgo(img_a, img_b, img_box_width, img_x_start, img_y_start, img_x_length,
             x.append(p + (search_box_width - img_box_width)/2);
             v.append(yInd - (search_box_width - img_box_width)/2);
             u.append(xInd - (search_box_width - img_box_width)/2);
-            k = k + 1;
     return (y,x,v,u)
