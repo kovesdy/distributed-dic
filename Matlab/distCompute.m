@@ -20,15 +20,15 @@ function [y,x,v,u,algoTime] = distCompute(img_a, img_b, img_box_width, img_x_sta
             url = 'http://ec2-204-236-180-243.us-west-1.compute.amazonaws.com:5000';
         case 3
             url = 'http://ec2-54-153-102-11.us-west-1.compute.amazonaws.com:5000';
-        case 0
-            url = 'http://ec2-13-52-242-33.us-west-1.compute.amazonaws.com:5000';
-        case 1
-            url = 'http://ec2-3-101-25-193.us-west-1.compute.amazonaws.com:5000';
-        case 2
-            url = 'http://ec2-54-176-41-10.us-west-1.compute.amazonaws.com:5000';
-        case 3
-            url = 'http://ec2-13-52-243-17.us-west-1.compute.amazonaws.com:5000';
         case 4
+            url = 'http://ec2-13-52-242-33.us-west-1.compute.amazonaws.com:5000';
+        case 5
+            url = 'http://ec2-3-101-25-193.us-west-1.compute.amazonaws.com:5000';
+        case 6
+            url = 'http://ec2-54-176-41-10.us-west-1.compute.amazonaws.com:5000';
+        case 7
+            url = 'http://ec2-13-52-243-17.us-west-1.compute.amazonaws.com:5000';
+        case 8
             url = 'http://ec2-52-53-197-114.us-west-1.compute.amazonaws.com:5000';
     end
     
